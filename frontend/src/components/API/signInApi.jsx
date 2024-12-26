@@ -2,7 +2,7 @@ async function BasicSignIn(username, password) {
   const basicAuth = btoa(`${username}:${password}`);
 
   try {
-      const response = await fetch("http://localhost:8080/auth/signin", {
+      const response = await fetch("http://localhost:8080/signin", {
           method: "POST",
           headers: {
               "Authorization": `Basic ${basicAuth}`,
