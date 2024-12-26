@@ -1,5 +1,7 @@
 package smart.city.parking.management.system.db.configurations;
 
+import java.security.CodeSigner;
+
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,21 +29,29 @@ import jakarta.servlet.Filter;
 public class SecurityConfiguration {
     @Autowired
     private JwtFilter jwtFilter;
+    @Autowired
+    private CorsConfig corsConfig;
+    
+    public SecurityConfiguration(JwtFilter jwtFilter, CorsConfig corsConfig) {
+        this.jwtFilter = jwtFilter;
+        this.corsConfig = corsConfig;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         return http.csrf(customizer -> customizer.disable())
-                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Enforce stateless sessions
-                    .httpBasic(Customizer.withDefaults())
-                    .addFilterBefore((Filter) jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                    .authorizeHttpRequests(configurer -> configurer
-                            // .requestMatchers(HttpMethod.POST, "/auth/testo").hasRole("USER") 
-                            // .requestMatchers(HttpMethod.POST, "/auth/admino").hasRole("ADMIN") 
-                            // .anyRequest().authenticated() // Secure all other APIs
-                            .anyRequest().permitAll()
-                    )
-                    .build();
+                .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Enforce stateless sessions
+                .httpBasic(Customizer.withDefaults())
+                .addFilterBefore((Filter) jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(configurer -> configurer
+                    // .requestMatchers(HttpMethod.POST, "/auth/testo").hasRole("USER") 
+                    .requestMatchers(HttpMethod.POST, "/auth/signin").hasRole("DRIVER") 
+                    .anyRequest().authenticated() // Secure all other APIs
+                    // .anyRequest().permitAll()
+                )
+                .build();
     }
 
     @Bean
@@ -80,4 +90,5 @@ public class SecurityConfiguration {
         provider.setPasswordEncoder(encoder);
         return new ProviderManager(provider);
     }
+    
 }
