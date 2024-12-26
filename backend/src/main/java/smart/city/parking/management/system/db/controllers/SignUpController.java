@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import smart.city.parking.management.system.db.models.Account;
 import smart.city.parking.management.system.db.services.SignUpService;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/signup")
 public class SignUpController {
@@ -27,7 +28,7 @@ public class SignUpController {
                 return ResponseEntity.badRequest().build();
             }
         }
-        catch (DuplicateKeyException de) {
+        catch (RuntimeException re) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         catch (Exception e) {

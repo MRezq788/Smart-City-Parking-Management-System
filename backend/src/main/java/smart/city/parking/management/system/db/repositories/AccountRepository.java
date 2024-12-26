@@ -2,10 +2,14 @@ package smart.city.parking.management.system.db.repositories;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import smart.city.parking.management.system.db.models.Account;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository
@@ -13,7 +17,7 @@ public class AccountRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    
+
     public AccountRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -35,6 +39,8 @@ public class AccountRepository {
 
     public int addAccount(String username, String password, String fullName, String role) {
         String sql = "INSERT INTO Account (username, password, full_name, role) VALUES (?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, username, password, fullName, role);
+        jdbcTemplate.update(sql, username, password, fullName, role);
+
+        return jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
     }
 }

@@ -1,6 +1,9 @@
 package smart.city.parking.management.system.db.services;
 
 import org.springframework.stereotype.Service;
+import smart.city.parking.management.system.db.dtos.DriverAccountDTO;
+import smart.city.parking.management.system.db.models.Account;
+import smart.city.parking.management.system.db.models.Driver;
 import smart.city.parking.management.system.db.repositories.DriverRepository;
 
 @Service
@@ -12,7 +15,9 @@ public class DriverService {
         this.driverRepository = driverRepository;
     }
 
-    public int addDriver(int accountId, String plateNumber, String paymentMethod, int penaltyCounter, boolean isBanned) {
-        return driverRepository.addDriver(accountId, plateNumber, paymentMethod, penaltyCounter, isBanned);
+    public int addDriver(DriverAccountDTO dto) {
+        Account account = new Account(0, dto.username(), dto.password(), dto.fullName(), dto.role());
+        Driver driver = new Driver(0, 0, dto.plateNumber(), dto.paymentMethod(), 0, false);
+        return driverRepository.addDriverAndAccount(account, driver);
     }
 }
