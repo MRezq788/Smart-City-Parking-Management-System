@@ -1,0 +1,96 @@
+/* Main container to center the form */
+.mainContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9; /* Light background for better contrast */
+}
+
+/* Form container with borders and shadow */
+.formContainer {
+  width: 35%;
+  padding: 40px;
+  background-color: white;
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Title styling */
+.titleContainer h1 {
+  text-align: center;
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Input container */
+.inputContainer {
+  margin-bottom: 20px;
+}
+
+.inputBox {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.inputBox:focus {
+  border-color: #162852; /* Blue border on focus */
+  box-shadow: 0 0 4px rgba(22, 40, 82, 0.4); /* Subtle blue shadow */
+}
+
+.errorLabel {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* Button container */
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.inputButton {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #162852;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.inputButton:hover {
+  background-color: #0056b3; /* Darker blue for hover effect */
+}
+
+/* Sign-up container for additional navigation */
+.signUpContainer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.signUpButton {
+  background: none;
+  border: none;
+  color: #162852;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.signUpButton:hover {
+  color: #0056b3;
+}
