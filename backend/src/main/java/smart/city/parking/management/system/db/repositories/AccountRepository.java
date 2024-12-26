@@ -32,4 +32,9 @@ public class AccountRepository {
         String sql = "SELECT account_id FROM Account WHERE username = ?";
         return jdbcTemplate.query(sql, new AccountRowMapper(), username).get(0).accountId();
     }
+
+    public int addAccount(String username, String password, String fullName, String role) {
+        String sql = "INSERT INTO Account (username, password, full_name, role) VALUES (?, ?, ?, ?)";
+        return jdbcTemplate.update(sql, username, password, fullName, role);
+    }
 }

@@ -13,7 +13,8 @@ public class AccountRowMapper implements RowMapper<Account> {
         return new Account(
             rs.getInt("account_id"), 
             rs.getString("username"), 
-            rs.getString("full_name"), 
+            rs.getString("full_name"),
+            rs.getString("password"),
             rs.getString("role")
         );
     }
