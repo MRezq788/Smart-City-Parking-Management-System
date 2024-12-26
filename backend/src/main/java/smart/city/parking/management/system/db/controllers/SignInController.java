@@ -1,5 +1,4 @@
 package smart.city.parking.management.system.db.controllers;
-
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,13 +7,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import smart.city.parking.management.system.db.repositories.AccountRepository;
 import smart.city.parking.management.system.db.services.JWTService;
 
 @RestController
-@RequestMapping("/auth")
 public class SignInController {
 
     @Autowired
@@ -44,7 +41,7 @@ public class SignInController {
                     .toString(); // Convert to a string or pass as a list
 
             // Extract account_id from the database
-            long id = accountRepository.findIdByUsername(userDetails.getUsername());
+            int id = accountRepository.findIdByUsername(userDetails.getUsername());
 
             // Generate the JWT
             String token = jwtService.generateToken(userDetails.getUsername());

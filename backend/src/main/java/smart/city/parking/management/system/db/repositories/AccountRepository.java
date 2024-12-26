@@ -29,7 +29,7 @@ public class AccountRepository {
     }
 
     public int findIdByUsername(String username) {
-        String sql = "SELECT account_id FROM Account WHERE username = ?";
+        String sql = "SELECT * FROM account WHERE username = ?";
         return jdbcTemplate.query(sql, new AccountRowMapper(), username).get(0).accountId();
     }
 
