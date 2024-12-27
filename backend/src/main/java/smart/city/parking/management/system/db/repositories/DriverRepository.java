@@ -2,14 +2,12 @@ package smart.city.parking.management.system.db.repositories;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import smart.city.parking.management.system.db.dtos.AdminPageDriverDTO;
 import smart.city.parking.management.system.db.models.Account;
 import smart.city.parking.management.system.db.models.Driver;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.util.List;
 
 @Repository
 public class DriverRepository {
@@ -44,4 +42,27 @@ public class DriverRepository {
             throw new RuntimeException("Failed to add driver and account. Transaction rolled back.", e);
         }
     }
+
+
+
+    public List<AdminPageDriverDTO> findAllDriversWithPages(int page, int size) {
+        String sql = "CALL get_all_drivers_paginated(?, ?)";
+        return jdbcTemplate.query(sql, new AdminDriverRowMapper(), page, size);
+    }
+
+    public List<AdminPageDriverDTO> searchDrivers(String searchTerm, int page, int size) {
+        String sql = "CALL search_drivers_paginated(?, ?, ?)";
+        return jdbcTemplate.query(sql, new AdminDriverRowMapper(), searchTerm, page,  size);
+    }
+
+    public void banDriver(int driverId) {
+        String sql = "CALL ban_driver(?)";
+        jdbcTemplate.update(sql, driverId);
+    }
+
+    public void unbanDriver(int driverId) {
+        String sql = "CALL unban_driver(?)";
+        jdbcTemplate.update(sql, driverId);
+    }
 }
+
