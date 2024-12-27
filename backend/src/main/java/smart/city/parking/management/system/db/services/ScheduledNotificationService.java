@@ -58,7 +58,9 @@ public class ScheduledNotificationService {
                 if (!"occupied".equalsIgnoreCase(spotStatus)) { // If spot is not occupied
                     Notification notification = new Notification();
                     notification.setAccountId(driverRepository.findDriverById(r.getDriver_id()).accountId());
-                    notification.setMessage("You have a penalty of 50$ for not arriving at the spot on time!");
+                    notification.setMessage("You didn't show up at your reservation time. Your penalty counter is"
+                            +driverRepository.findDriverById(r.getDriver_id()).penaltyCounter()
+                            +". If it reaches 5 you will be banned.");
                     notification.setTimestamp(LocalDateTime.now());
                     notificationHandler.sendNotification(notification);
                     r.set_notified(true); // Mark as notified
@@ -66,7 +68,8 @@ public class ScheduledNotificationService {
 
                     Notification managerNotification = new Notification();
                     managerNotification.setAccountId(lotRepo.findLotById(spot.getLot_id()).getManager_id());
-                    managerNotification.setMessage("Driver with ID " + r.getDriver_id() + " has a penalty of 50$ for not arriving at the spot on time!");
+                    managerNotification.setMessage("Driver with ID " + r.getDriver_id()
+                            + " has a new penalty!");
                     managerNotification.setTimestamp(LocalDateTime.now());
                     notificationHandler.sendNotification(managerNotification);
 
