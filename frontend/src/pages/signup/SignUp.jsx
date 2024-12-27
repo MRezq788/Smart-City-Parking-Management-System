@@ -228,17 +228,6 @@
               <div>
                 <input
                   type="radio"
-                  id="admin"
-                  name="role"
-                  value="ROLE_ADMIN"
-                  checked={role === "ROLE_ADMIN"}
-                  onChange={handleRoleChange}
-                />
-                <label htmlFor="admin">Admin</label>
-              </div>
-              <div>
-                <input
-                  type="radio"
                   id="lotManager"
                   name="role"
                   value="ROLE_MANAGER"
