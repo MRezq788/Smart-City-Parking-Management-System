@@ -112,24 +112,23 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
           }}
         >
           {reservations.length > 0 ? (
-            // Sort the reservations by date and then startTime before mapping
             [...reservations]
               .sort((a, b) => {
                 const dateA = new Date(a.date);
                 const dateB = new Date(b.date);
-
+                
                 if (dateA - dateB !== 0) {
-                  return dateA - dateB; // Sort by date first
+                  return dateA - dateB;
                 }
-
-                return new Date(a.start_hour) - new Date(b.start_hour); // Then by startTime if dates are the same
+                
+                return a.start_hour - b.start_hour;
               })
               .map((reservation, index) => (
                 <div key={index}>
                   <ListItem>
                     <ListItemText
                       primary={format(new Date(reservation.date), 'PP')}
-                      secondary={`Time: ${format(new Date(reservation.start_hour), 'p')} | Duration: ${reservation.duration} hours`}
+                      secondary={`Time: ${reservation.start_hour}:00 | Duration: ${reservation.duration} hours`}
                     />
                     {!isDriver && (
                       <Button

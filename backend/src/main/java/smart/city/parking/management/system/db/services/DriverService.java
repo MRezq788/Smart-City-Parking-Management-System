@@ -7,6 +7,7 @@ import smart.city.parking.management.system.db.dtos.DriverAccountDTO;
 import smart.city.parking.management.system.db.dtos.LotDTO;
 import smart.city.parking.management.system.db.dtos.ReservationDTO;
 import smart.city.parking.management.system.db.dtos.SpotDTO;
+import smart.city.parking.management.system.db.enums.SpotStatus;
 import smart.city.parking.management.system.db.mapper.LotMapper;
 import smart.city.parking.management.system.db.mapper.ReservationMapper;
 import smart.city.parking.management.system.db.mapper.SpotMapper;
@@ -84,5 +85,10 @@ public class DriverService {
 
     public void addReservation(reservation res) {
         reservationRepo.addReservation(res);
+        parking_spot spot = spotRepo.findSpotById(res.getSpot_id());
+        if(spot != null){
+            spot.setStatus(SpotStatus.reserved);
+            spotRepo.updateSpot(spot);
+        }
     }
 }
