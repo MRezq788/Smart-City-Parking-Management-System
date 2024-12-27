@@ -43,6 +43,26 @@ public class DriverRepository {
         }
     }
 
+    public Driver findDriverByAccountId(int accountId) {
+        String sql = "SELECT * FROM driver WHERE account_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{accountId}, (rs, rowNum) -> {
+            Driver driver = new Driver(rs.getInt("driver_id"),rs.getInt("account_id"),
+                    rs.getString("plate_number"), rs.getString("payment_method"),
+                    rs.getInt("penalty_counter"), rs.getBoolean("is_banned"));
+            return driver;
+        });
+    }
+
+    public Driver findDriverById(int id) {
+        String sql = "SELECT * FROM driver WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
+            Driver driver = new Driver(rs.getInt("id"),rs.getInt("account_id"),
+                    rs.getString("plate_number"), rs.getString("payment_method"),
+                    rs.getInt("penalty_counter"), rs.getBoolean("is_banned"));
+            return driver;
+        });
+    }
+
 
 
     public List<AdminPageDriverDTO> findAllDriversWithPages(int page, int size) {
@@ -65,4 +85,3 @@ public class DriverRepository {
         jdbcTemplate.update(sql, driverId);
     }
 }
-

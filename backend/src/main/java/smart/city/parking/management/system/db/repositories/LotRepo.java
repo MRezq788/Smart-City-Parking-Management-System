@@ -52,4 +52,21 @@ public class LotRepo {
             return parkinglot;
         });
     }
+
+    public parking_lot findLotById(int lotId) {
+        String sql = "SELECT * FROM parking_lot WHERE lot_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{lotId}, (rs, rowNum) -> {
+            parking_lot parkinglot = new parking_lot();
+            parkinglot.setLot_id(rs.getInt("lot_id"));
+            parkinglot.setManager_id(rs.getInt("manager_id"));
+            parkinglot.setLongitude(rs.getBigDecimal("longitude"));
+            parkinglot.setLatitude(rs.getBigDecimal("latitude"));
+            parkinglot.setCapacity(rs.getInt("capacity"));
+            parkinglot.setOriginal_price(rs.getBigDecimal("original_price"));
+            parkinglot.setDynamic_weight(rs.getBigDecimal("dynamic_weight"));
+            parkinglot.setDisabled_discount(rs.getBigDecimal("disabled_discount"));
+            parkinglot.setEv_fees(rs.getBigDecimal("ev_fees"));
+            return parkinglot;
+        });
+    }
 }

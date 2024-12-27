@@ -1,10 +1,12 @@
-import { use, useState, useEffect } from 'react';
-import { Grid, Container, Paper } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Grid, Container, Paper, Box, IconButton, Typography } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import ParkingMap from './ParkingMap';
 import ParkingLotList from './ParkingLotList';
 import SpotList from './SpotList';
 import ReservationModal from './ReservationModal';
 import SpotDetails from './SpotDetails';
+import NotificationList from './NotificationList';
 import { hasTimeConflict } from '../utils/dateUtils';
 
 const mockReservations = [
@@ -20,7 +22,6 @@ const mockReservations = [
     startTime: '2', // 2 PM
     duration: 3, // 3 hours
   },
-
 ];
 
 const mockParkingLots = [
@@ -72,12 +73,9 @@ const mockParkingLots = [
       reservations: []
     }))
   },
-  
 ];
 
-
 function DriverHome() {
-
   useEffect(() => {
     // Fetch parking lots from the server
     const url = 'localhost:8080/driver/parkinglots';
@@ -91,8 +89,25 @@ function DriverHome() {
           return response.json();
         })
         .then((data) => setParkingLots(data))
-        .catch((error) => console.error('Error fetching parking lots:', error));      
+        .catch((error) => console.error('Error fetching parking lots:', error));   
+        
+    //Fetch notifications from the server
+    fetch(`http://localhost:8080/notifications/${id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => setNotifications(data))
+      .catch((error) => console.error('Error fetching notifications:', error));
   });
+
 
   const [parkingLots, setParkingLots] = useState(mockParkingLots);
   const [selectedLot, setSelectedLot] = useState(null);
@@ -100,6 +115,8 @@ function DriverHome() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSpotDetailsOpen, setIsSpotDetailsOpen] = useState(false);
   const [reservationError, setReservationError] = useState('');
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const handleLotSelect = (lot) => {
     setSelectedLot(lot);
@@ -111,51 +128,37 @@ function DriverHome() {
   };
 
   const handleReservation = (reservation) => {
-    // Check for time conflicts
     if (hasTimeConflict(selectedSpot.reservations, reservation)) {
       setReservationError('This time slot conflicts with an existing reservation');
       return;
     }
 
-    
     if (!selectedLot) return;
-    // Update spot's reservations
     const updatedSpots = selectedLot.spots.map(spot => {
       if (spot.id === selectedSpot.id) {
-        // Check if the selected spot is available
-        if (spot.status != 'occupied') {
-          return { 
-            ...spot, 
-            reservations: [...spot.reservations, reservation], 
-            status: 'reserved' 
-          };
+        if (spot.status !== 'occupied') {
+          return { ...spot, reservations: [...spot.reservations, reservation], status: 'reserved' };
         } else {
-          return { 
-            ...spot, 
-            reservations: [...spot.reservations, reservation]
-          };
+          return { ...spot, reservations: [...spot.reservations, reservation] };
         }
       }
       return spot;
     });
 
-  
     setSelectedLot({ ...selectedLot, spots: updatedSpots });
 
     const url = `localhost:8080/driver/reserve/spot/${selectedSpot.id}`;
     fetch(url, {
-        method: 'POST', // Explicitly specify the request method
-        body: JSON.stringify(reservation)
+      method: 'POST',
+      body: JSON.stringify(reservation),
     })
-        .then((response) => {
+      .then((response) => {
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
         return response.json();
-        })
-        .catch((error) => console.error('Error submiting reservation:', error));
-    
-    
+      })
+      .catch((error) => console.error('Error submitting reservation:', error));
 
     setReservationError('');
     setIsModalOpen(false);
@@ -168,50 +171,59 @@ function DriverHome() {
     setIsModalOpen(true);
   };
 
+  const toggleNotificationList = () => {
+    setShowNotifications(!showNotifications);
+  };
+
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      {/* Blue Bar */}
+      <Box sx={{
+        backgroundColor: '#162852',
+        color: 'white',
+        padding: '10px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <Typography variant="h6">Smart City Parking</Typography>
+        <IconButton color="inherit" onClick={toggleNotificationList}>
+          <NotificationsIcon />
+        </IconButton>
+      </Box>
+
       <Grid container spacing={3}>
+        {/* Parking Lot and Spot Management */}
         <Grid item xs={12} md={6}>
-          <Paper
-            sx={{
-              p: 2,
-              maxHeight: 400, // Adjust the height limit as needed
-              overflowY: 'auto', // Enable vertical scrolling
-            }}
-          >
-            <ParkingLotList
-              parkingLots={parkingLots}
-              onLotSelect={handleLotSelect}
-            />
+          <Paper sx={{ p: 2, maxHeight: 400, overflowY: 'auto' }}>
+            <ParkingLotList parkingLots={parkingLots} onLotSelect={handleLotSelect} />
           </Paper>
         </Grid>
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
-            <ParkingMap
-              parkingLots={parkingLots}
-              onLotSelect={handleLotSelect}
-            />
+            <ParkingMap parkingLots={parkingLots} onLotSelect={handleLotSelect} />
           </Paper>
         </Grid>
+
+        {/* Parking Spots */}
         {selectedLot && (
           <Grid item xs={12}>
-            <Paper 
-              sx={{
-                p: 2,
-                maxHeight: 770, 
-                overflowY: 'auto',
-              }}
-            >
+            <Paper sx={{ p: 2, maxHeight: 770, overflowY: 'auto' }}>
               <h2>{selectedLot.name} - Parking Spots</h2>
-              <SpotList
-                spots={selectedLot.spots}
-                onSpotSelect={handleSpotSelect}
-              />
+              <SpotList spots={selectedLot.spots} onSpotSelect={handleSpotSelect} />
             </Paper>
+          </Grid>
+        )}
+
+        {/* Notifications */}
+        {showNotifications && (
+          <Grid item xs={12}>
+            <NotificationList notifications={notifications} />
           </Grid>
         )}
       </Grid>
 
+      {/* Modals */}
       <SpotDetails
         lot={selectedLot}
         spot={selectedSpot}

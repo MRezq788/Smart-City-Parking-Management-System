@@ -42,7 +42,7 @@ public class SecurityConfiguration {
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore((Filter) jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(configurer -> configurer
-                    // .requestMatchers(HttpMethod.POST, "/auth/testo").hasRole("USER")
+                    // .requestMatchers(HttpMethod.POST, "/auth/testo").hasRole("USER") 
                     .requestMatchers(HttpMethod.POST, "/signin").permitAll()
                     .requestMatchers(HttpMethod.POST, "/signup/add").permitAll()
                     .requestMatchers(HttpMethod.POST, "/drivers/add").permitAll()
