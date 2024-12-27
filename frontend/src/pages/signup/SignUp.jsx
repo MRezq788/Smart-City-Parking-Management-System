@@ -1,6 +1,8 @@
   import { useState } from "react";
   import { FaEye, FaEyeSlash } from "react-icons/fa";
   import "./SignUp.css";
+  import { useNavigate } from 'react-router-dom';
+  
 
   function SignUp() {
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -12,6 +14,7 @@
     const [role, setRole] = useState("ROLE_DRIVER");
     const [plateNumber, setPlateNumber] = useState("");
     const [paymentMethod, setPaymentMethod] = useState("cash");
+    const navigate = useNavigate();
 
     function switchVisibility() {
       setPasswordVisible(!passwordVisible);
@@ -152,6 +155,9 @@
         alert("Error during registration. Please try again.");
       }
     };
+    function loginNavigate(){
+      navigate('/signin');
+    }
 
     return (
       <div className="page">
@@ -306,6 +312,10 @@
             Submit
           </button>
         </form>
+        <button className="form-button" onClick={loginNavigate}>
+            log in 
+        </button>
+        
       </div>
     );
   }

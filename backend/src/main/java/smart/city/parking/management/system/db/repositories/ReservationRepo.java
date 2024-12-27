@@ -1,9 +1,9 @@
-package smart.city.parking.management.system.db.repository;
+package smart.city.parking.management.system.db.repositories;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import smart.city.parking.management.system.db.entity.reservation;
+import smart.city.parking.management.system.db.models.reservation;
 
 import java.util.List;
 

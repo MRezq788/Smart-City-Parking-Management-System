@@ -47,7 +47,7 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.POST, "/signup/add").permitAll() 
                     .requestMatchers(HttpMethod.POST, "/drivers/add").permitAll() 
                     .anyRequest().authenticated() // Secure all other APIs
-                    // .anyRequest().permitAll()
+//                     .anyRequest().permitAll()
                 )
                 .build();
     }
@@ -60,7 +60,7 @@ public class SecurityConfiguration {
         jdbcUserDetailsManager.setUsersByUsernameQuery(
                 "SELECT username, password, " +
                 // Assuming all accounts are enabled by default since 'enabled' is not in the schema
-                "true AS enabled " +
+                "enabled " +
                 "FROM Account " +
                 "WHERE username = ?");
     

@@ -1,4 +1,4 @@
-package smart.city.parking.management.system.db.entity;
+package smart.city.parking.management.system.db.models;
 
 import lombok.Data;
 import org.springframework.context.annotation.Scope;
