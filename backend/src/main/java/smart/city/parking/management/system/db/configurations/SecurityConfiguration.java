@@ -60,7 +60,7 @@ public class SecurityConfiguration {
         jdbcUserDetailsManager.setUsersByUsernameQuery(
                 "SELECT username, password, " +
                 // Assuming all accounts are enabled by default since 'enabled' is not in the schema
-                "enabled " +
+                "true AS enabled " +
                 "FROM Account " +
                 "WHERE username = ?");
     
