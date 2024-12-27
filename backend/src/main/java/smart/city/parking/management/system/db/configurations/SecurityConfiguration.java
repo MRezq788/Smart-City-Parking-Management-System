@@ -1,9 +1,5 @@
 package smart.city.parking.management.system.db.configurations;
-
-import java.security.CodeSigner;
-
 import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,7 +43,7 @@ public class SecurityConfiguration {
                 .addFilterBefore((Filter) jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(configurer -> configurer
                     // .requestMatchers(HttpMethod.POST, "/auth/testo").hasRole("USER") 
-                    .requestMatchers(HttpMethod.POST, "/signin").hasRole("DRIVER") 
+                    .requestMatchers(HttpMethod.POST, "/signin").permitAll()
                     .requestMatchers(HttpMethod.POST, "/signup/add").permitAll() 
                     .requestMatchers(HttpMethod.POST, "/drivers/add").permitAll() 
                     .anyRequest().authenticated() // Secure all other APIs
