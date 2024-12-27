@@ -130,6 +130,7 @@
 
           if (response.ok) {
             alert("Registration successful!");
+            loginNavigate();
           } else if (response.status === 409) {
             alert("Username or Plate Number is already used.")
           }
@@ -145,6 +146,7 @@
     
           if (response.ok) {
             alert("Registration successful!");
+            loginNavigate();
           } else if (response.status === 409) {
             
             alert("Username is already used.")
@@ -300,11 +302,15 @@
           <button type="submit" className="form-button">
             Submit
           </button>
+          <div className="signUpContainer">
+            <p>
+              Have an account?{' '}
+              <button className="signUpButton" onClick={loginNavigate}>
+                Log in
+              </button>
+            </p>
+          </div>
         </form>
-        <button className="form-button" onClick={loginNavigate}>
-            log in 
-        </button>
-        
       </div>
     );
   }

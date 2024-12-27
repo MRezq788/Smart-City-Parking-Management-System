@@ -21,15 +21,15 @@ public class ReservationRepo {
     public List<reservation> findAllReservationsByDriverId(int driverId) {
         String sql = "SELECT * FROM reservation WHERE driver_id = ?";
         return jdbcTemplate.query(sql, new Object[]{driverId}, (rs, rowNum) -> {
-            reservation reservation = new reservation();
-            reservation.setReservation_id(rs.getInt("reservation_id"));
-            reservation.setSpot_id(rs.getInt("spot_id"));
-            reservation.setDriver_id(rs.getInt("driver_id"));
-            reservation.setStart_hour(rs.getInt("start_hour"));
-            reservation.setDuration(rs.getInt("duration"));
-            reservation.setDate(rs.getDate("date"));
-            reservation.set_arrived(rs.getBoolean("is_arrived"));
-            return reservation;
+            reservation res = new reservation();
+            res.setReservation_id(rs.getInt("reservation_id"));
+            res.setSpot_id(rs.getInt("spot_id"));
+            res.setDriver_id(rs.getInt("driver_id"));
+            res.setStart_hour(rs.getInt("start_hour"));
+            res.setDuration(rs.getInt("duration"));
+            res.setDate(rs.getDate("date"));
+            res.set_arrived(rs.getBoolean("is_arrived"));
+            return res;
         });
     }
 

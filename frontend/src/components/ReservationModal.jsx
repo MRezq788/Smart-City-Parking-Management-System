@@ -15,7 +15,7 @@ import { startOfToday, isToday } from 'date-fns';
 
 function ReservationModal({ open, onClose, spot, onReserve, error }) {
   const [date, setDate] = useState(null);
-  const [startTime, setStartTime] = useState(null);
+  const [start_hour, setStartTime] = useState(null);
   const [duration, setDuration] = useState('');
   
   // Get the current date and time
@@ -33,14 +33,14 @@ function ReservationModal({ open, onClose, spot, onReserve, error }) {
   };
 
   const handleReserve = () => {
-    if (!date || !startTime || !duration) return;
+    if (!date || !start_hour || !duration) return;
 
     const reservation = {
       date: date,
-      startTime: startTime,
+      start_hour: start_hour.getHours(),
       duration: parseInt(duration),
     };
-
+    console.log("my res : "+ reservation);
     onReserve(reservation);
   };
 
@@ -63,7 +63,7 @@ function ReservationModal({ open, onClose, spot, onReserve, error }) {
           />
           <TimePicker
             label="Start Time"
-            value={startTime}
+            value={start_hour}
             onChange={handleTimeChange}
             ampm={false}   // Disable AM/PM, use 24-hour format
             views={['hours']}  // Limit the picker to hours
@@ -83,7 +83,7 @@ function ReservationModal({ open, onClose, spot, onReserve, error }) {
           <Button onClick={onClose}>Cancel</Button>
           <Button
             onClick={handleReserve}
-            disabled={!date || !startTime || !duration}
+            disabled={!date || !start_hour || !duration}
           >
             Reserve
           </Button>

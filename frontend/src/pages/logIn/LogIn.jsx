@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import './LogIn.css';
 import BasicSignIn from '../../components/API/signInApi';
+import useAuth from '../../hooks/useAuth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState('');
 
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const onButtonClick = async () => {
     setEmailError('');
@@ -39,6 +41,12 @@ const Login = () => {
       const response = await BasicSignIn(email, password);
       console.log('Login successful', response);
       const parsedToken = JSON.parse(response.token); // Parse the stringified token into a JavaScript object
+
+      login({
+        id: parsedToken.id,
+        token: parsedToken.token,
+        role: parsedToken.role
+      });
 
       // Now you can check the role in the parsed token
       if (parsedToken.role === '[ROLE_DRIVER]') {

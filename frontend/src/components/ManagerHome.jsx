@@ -9,31 +9,31 @@ const mockReservations = [
     {
       id: 1,
       date: '2024-12-01', // Format: YYYY-MM-DD
-      startTime: '8', // 8 AM
+      start_hour: '8', // 8 AM
       duration: 2, // 2 hours
     },
     {
       id: 2,
       date: '2024-12-01',
-      startTime: '2024-12-01T14:00:00', // 2 PM
+      start_hour: '2024-12-01T14:00:00', // 2 PM
       duration: 3, // 3 hours
     },
     {
       id: 3,
       date: '2024-12-02',
-      startTime: '2024-12-02T10:00:00', // 10 AM
+      start_hour: '2024-12-02T10:00:00', // 10 AM
       duration: 1, // 1 hour
     },
     {
       id: 4,
       date: '2024-12-03',
-      startTime: '2024-12-03T15:00:00', // 3 PM
+      start_hour: '2024-12-03T15:00:00', // 3 PM
       duration: 4, // 4 hours
     },
     {
       id: 5,
       date: '2024-12-03',
-      startTime: '2024-12-03T09:00:00', // 9 AM
+      start_hour: '2024-12-03T09:00:00', // 9 AM
       duration: 1.5, // 1.5 hours
     },
   ];

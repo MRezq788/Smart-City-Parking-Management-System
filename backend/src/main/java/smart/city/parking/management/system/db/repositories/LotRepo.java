@@ -14,9 +14,9 @@ public class LotRepo {
 
     public void addLot(parking_lot parkinglot) {
         jdbcTemplate.update("INSERT INTO parking_lot (manager_id, longitude, latitude, capacity, original_price," +
-                        " dynamic_weight, disabled_discount, ev_fees) VALUES (?,?,?,?,?,?,?,?)",
+                        " dynamic_weight, disabled_discount, ev_fees, name) VALUES (?,?,?,?,?,?,?,?,?)",
                 parkinglot.getManager_id(), parkinglot.getLongitude(), parkinglot.getLatitude(), parkinglot.getCapacity(), parkinglot.getOriginal_price(),
-                parkinglot.getDynamic_weight(), parkinglot.getDisabled_discount(), parkinglot.getEv_fees());
+                parkinglot.getDynamic_weight(), parkinglot.getDisabled_discount(), parkinglot.getEv_fees(),parkinglot.getName());
     }
 
     public List<parking_lot> findAllLots() {
@@ -32,6 +32,7 @@ public class LotRepo {
             parkinglot.setDynamic_weight(rs.getBigDecimal("dynamic_weight"));
             parkinglot.setDisabled_discount(rs.getBigDecimal("disabled_discount"));
             parkinglot.setEv_fees(rs.getBigDecimal("ev_fees"));
+            parkinglot.setName(rs.getString("name"));
             return parkinglot;
         });
     }
@@ -49,6 +50,7 @@ public class LotRepo {
             parkinglot.setDynamic_weight(rs.getBigDecimal("dynamic_weight"));
             parkinglot.setDisabled_discount(rs.getBigDecimal("disabled_discount"));
             parkinglot.setEv_fees(rs.getBigDecimal("ev_fees"));
+            parkinglot.setName(rs.getString("name"));
             return parkinglot;
         });
     }

@@ -6,6 +6,7 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
   const [reservations, setReservations] = useState([]);
 
   useEffect(() => {
+    
     if (spot) {
       setReservations(spot.reservations);
     }
@@ -29,18 +30,20 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
 
     if (spot?.type === "disabled") {
       return lot.original_price * (1 - lot.disabled_discount) * lot.dynamic_weight;
-    } else if (spot?.type === "ev") {
-      return lot.original_price * (1 + lot.ev_fees) * lot.dynamic_weight;
-    } else {
+    } else if (spot?.type === "regular") {
       return lot.original_price * lot.dynamic_weight;
+    } else {
+      return lot.original_price * (1 + lot.ev_fees) * lot.dynamic_weight;
     }
   };
 
   const updateSpot = async (updatedSpot) => {
     try {
-      const response = await fetch(`http://localhost:8080/spots/${updatedSpot.id}`, {
+      const token = sessionStorage.getItem('token'); 
+      const response = await fetch(`http://localhost:8080/spots/${updatedSpot.spot_id}`, {
         method: 'PUT',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedSpot),
@@ -119,14 +122,14 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
                   return dateA - dateB; // Sort by date first
                 }
 
-                return new Date(a.startTime) - new Date(b.startTime); // Then by startTime if dates are the same
+                return new Date(a.start_hour) - new Date(b.start_hour); // Then by startTime if dates are the same
               })
               .map((reservation, index) => (
                 <div key={index}>
                   <ListItem>
                     <ListItemText
                       primary={format(new Date(reservation.date), 'PP')}
-                      secondary={`Time: ${format(new Date(reservation.startTime), 'p')} | Duration: ${reservation.duration} hours`}
+                      secondary={`Time: ${format(new Date(reservation.start_hour), 'p')} | Duration: ${reservation.duration} hours`}
                     />
                     {!isDriver && (
                       <Button
