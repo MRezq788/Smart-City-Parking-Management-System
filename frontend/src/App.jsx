@@ -2,6 +2,7 @@ import DriverHome from './components/DriverHome';
 import ManagerHome from './components/ManagerHome';
 import SignUp from "./pages/signup/SignUp";
 import SignIn from "./pages/logIn/LogIn";
+import AdminDashboard from './pages/admin/AdminDashboard';
 import { Navigate } from 'react-router-dom';
 
 
@@ -13,6 +14,7 @@ function App() {
             <Router>
                 <Routes>
                 <Route path="/" element={<Navigate to="/clientSignUp" />} />
+                    <Route path='/admin' element={<AdminDashboard />} />
                     <Route path="/clientSignUp" element={<SignUp />} />
                     <Route path="/signIn" element={<SignIn/>} />
                     <Route path="/driver/home" element={<DriverHome />} />

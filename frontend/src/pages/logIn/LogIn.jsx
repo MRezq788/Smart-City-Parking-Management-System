@@ -39,14 +39,16 @@ const Login = () => {
       const response = await BasicSignIn(email, password);
       console.log('Login successful', response);
       const parsedToken = JSON.parse(response.token); // Parse the stringified token into a JavaScript object
-
+      sessionStorage.setItem('token', parsedToken.token);
       // Now you can check the role in the parsed token
       if (parsedToken.role === '[ROLE_DRIVER]') {
         navigate('/driver/home');
-      } else {
+      } else if (parsedToken.role === '[ROLE_MANAGER]') {
         navigate('/manager/home');
+      }else {
+        navigate('/admin')
       }
-
+      
     } catch (error) {
       console.error('Login error:', error);
       setPasswordError(error.message);

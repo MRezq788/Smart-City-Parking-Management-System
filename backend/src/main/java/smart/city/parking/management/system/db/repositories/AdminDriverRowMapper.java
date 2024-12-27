@@ -14,7 +14,8 @@ public class AdminDriverRowMapper implements RowMapper<AdminPageDriverDTO> {
                 rs.getString("username"),
                 rs.getString("full_name"),
                 rs.getString("plate_number"),
-                rs.getInt("penalty_counter")
+                rs.getInt("penalty_counter"),
+                rs.getBoolean("is_banned")
         );
     }
 }

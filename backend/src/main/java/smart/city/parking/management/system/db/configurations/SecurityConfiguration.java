@@ -38,18 +38,18 @@ public class SecurityConfiguration {
 
         return http.csrf(customizer -> customizer.disable())
                 .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Enforce stateless sessions
-//                .httpBasic(Customizer.withDefaults())
-//                .addFilterBefore((Filter) jwtFilter, UsernamePasswordAuthenticationFilter.class)
-//                .authorizeHttpRequests(configurer -> configurer
-//                    // .requestMatchers(HttpMethod.POST, "/auth/testo").hasRole("USER")
-//                    .requestMatchers(HttpMethod.POST, "/signin").permitAll()
-//                    .requestMatchers(HttpMethod.POST, "/signup/add").permitAll()
-//                    .requestMatchers(HttpMethod.POST, "/drivers/add").permitAll()
-//                    .requestMatchers(HttpMethod.GET, "/admin").permitAll()
-//                    .anyRequest().authenticated() // Secure all other APIs
-////                     .anyRequest().permitAll()
-//                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Enforce stateless sessions
+                .httpBasic(Customizer.withDefaults())
+                .addFilterBefore((Filter) jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(configurer -> configurer
+                    // .requestMatchers(HttpMethod.POST, "/auth/testo").hasRole("USER")
+                    .requestMatchers(HttpMethod.POST, "/signin").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/signup/add").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/drivers/add").permitAll()
+                    .requestMatchers("/admin/**").hasRole("ADMIN")
+                    .anyRequest().authenticated() // Secure all other APIs
+//                     .anyRequest().permitAll()
+                )
                 .build();
     }
 
@@ -61,7 +61,7 @@ public class SecurityConfiguration {
         jdbcUserDetailsManager.setUsersByUsernameQuery(
                 "SELECT username, password, " +
                 // Assuming all accounts are enabled by default since 'enabled' is not in the schema
-                "enabled " +
+                "true as enabled " +
                 "FROM Account " +
                 "WHERE username = ?");
     
