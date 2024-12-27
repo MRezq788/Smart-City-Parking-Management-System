@@ -14,7 +14,7 @@ public class SignUpService {
     }
 
     public int addAccount(String username, String password, String fullName, String role) {
-        String encodedPassword = passwordEncoder.encode(password);
+        String encodedPassword = "{bcrypt}"+passwordEncoder.encode(password);
         return accountRepository.addAccount(username, encodedPassword, fullName, role);
     }
 }

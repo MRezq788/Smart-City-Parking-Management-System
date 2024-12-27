@@ -47,7 +47,9 @@ public class SecurityConfiguration {
                 .addFilterBefore((Filter) jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(configurer -> configurer
                     // .requestMatchers(HttpMethod.POST, "/auth/testo").hasRole("USER") 
-                    .requestMatchers(HttpMethod.POST, "/auth/signin").hasRole("DRIVER") 
+                    .requestMatchers(HttpMethod.POST, "/signin").hasRole("DRIVER") 
+                    .requestMatchers(HttpMethod.POST, "/signup/add").permitAll() 
+                    .requestMatchers(HttpMethod.POST, "/drivers/add").permitAll() 
                     .anyRequest().authenticated() // Secure all other APIs
                     // .anyRequest().permitAll()
                 )
