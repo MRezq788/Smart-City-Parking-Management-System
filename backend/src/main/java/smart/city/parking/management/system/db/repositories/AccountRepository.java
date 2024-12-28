@@ -1,6 +1,7 @@
 package smart.city.parking.management.system.db.repositories;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -38,9 +39,17 @@ public class AccountRepository {
     }
 
     public int addAccount(String username, String password, String fullName, String role) {
-        String sql = "INSERT INTO Account (username, password, full_name, role) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, username, password, fullName, role);
+        try {
+            jdbcTemplate.execute("START TRANSACTION");
 
-        return jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+            String sql = "INSERT INTO Account (username, password, full_name, role) VALUES (?, ?, ?, ?)";
+            jdbcTemplate.update(sql, username, password, fullName, role);
+
+            jdbcTemplate.execute("COMMIT");
+            return jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+        } catch (DataAccessException e) {
+            jdbcTemplate.execute("ROLLBACK");
+            throw new RuntimeException("Failed to add account. Transaction rolled back.", e);
+        }
     }
 }
