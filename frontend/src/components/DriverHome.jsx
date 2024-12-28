@@ -167,39 +167,7 @@ function DriverHome() {
           })
           .then((data) => setNotifications(data))
           .catch((error) => console.error('Error fetching notifications:', error));
-
-    // WebSocket for real-time updates
-    const ws = new WebSocket('ws://localhost:8765');
-
-    ws.onmessage = (event) => {
-      const updatedSpot = JSON.parse(event.data);
-
-      setParkingLots((prevLots) =>
-        prevLots.map((lot) => ({
-          ...lot,
-          spots: lot.spots.map((spot) =>
-            spot.id === updatedSpot.id ? { ...spot, status: updatedSpot.status } : spot
-          ),
-        }))
-      );
-    };
-
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-      console.error('Error details:', {
-        isTrusted: error.isTrusted,
-        type: error.type,
-        target: error.target,
-        currentTarget: error.currentTarget,
-        eventPhase: error.eventPhase,
-      });
-    };
-
-    // Cleanup on component unmount
-    return () => {
-      ws.close();
-    };
-  }, []);
+  }, [notifications]);
 
   const handleLotSelect = (lot) => {
     setSelectedLot(lot);

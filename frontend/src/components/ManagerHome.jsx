@@ -180,7 +180,7 @@ function ManagerHome() {
           })
           .then((data) => setNotifications(data))
           .catch((error) => console.error('Error fetching notifications:', error));
-  });
+  },[notifications]);
 
   const [parkingLots, setParkingLots] = useState(mockParkingLots);
   const [selectedLot, setSelectedLot] = useState(null);
