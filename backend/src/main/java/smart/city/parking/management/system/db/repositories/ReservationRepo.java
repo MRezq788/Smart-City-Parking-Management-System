@@ -14,16 +14,29 @@ public class ReservationRepo {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public void addReservation(reservation res) {
+    public void addReservation(reservation reservation) {
         jdbcTemplate.update("INSERT INTO reservation (spot_id, driver_id, start_hour, duration, date, is_arrived, is_notified) VALUES (?,?,?,?,?,?,?)",
-                res.getSpot_id(), res.getDriver_id(), res.getStart_hour(),
-                res.getDuration(), res.getDate(), res.is_arrived(), res.is_notified());
+                reservation.getSpot_id(), reservation.getDriver_id(), reservation.getStart_hour(),
+                reservation.getDuration(), reservation.getDate(), reservation.is_arrived(), reservation.is_notified());
     }
-
-    public void updateReservation(reservation res) {
-        jdbcTemplate.update("UPDATE reservation SET spot_id = ?, driver_id = ?, start_hour = ?, duration = ?, date = ?, is_arrived = ?, is_notified = ? WHERE reservation_id = ?",
-                res.getSpot_id(), res.getDriver_id(), res.getStart_hour(),
-                res.getDuration(), res.getDate(), res.is_arrived(),res.is_notified(), res.getReservation_id());
+    public void deleteReservationById(int reservationId) {
+        String sql = "DELETE FROM reservation WHERE reservation_id = ?";
+        jdbcTemplate.update(sql, reservationId);
+    }
+    public reservation findReservationById(int reservationId) {
+        String sql = "SELECT * FROM reservation WHERE reservation_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{reservationId}, (rs, rowNum) -> {
+            reservation res = new reservation();
+            res.setReservation_id(rs.getInt("reservation_id"));
+            res.setSpot_id(rs.getInt("spot_id"));
+            res.setDriver_id(rs.getInt("driver_id"));
+            res.setStart_hour(rs.getInt("start_hour"));
+            res.setDuration(rs.getInt("duration"));
+            res.setDate(rs.getDate("date"));
+            res.set_arrived(rs.getBoolean("is_arrived"));
+            res.set_notified(rs.getBoolean("is_notified"));
+            return res;
+        });
     }
 
     public List<reservation> findAllReservationsByDriverId(int driverId) {
@@ -81,6 +94,12 @@ public class ReservationRepo {
 
     public void deleteReservation(int reservationId) {
         jdbcTemplate.update("DELETE FROM reservation WHERE reservation_id = ?", reservationId);
+    }
+
+    public void updateReservation(reservation reservation) {
+        jdbcTemplate.update("UPDATE reservation SET spot_id = ?, driver_id = ?, start_hour = ?, duration = ?, date = ?, is_arrived = ?, is_notified = ? WHERE reservation_id = ?",
+                reservation.getSpot_id(), reservation.getDriver_id(), reservation.getStart_hour(),
+                reservation.getDuration(), reservation.getDate(), reservation.is_arrived(), reservation.is_notified(), reservation.getReservation_id());
     }
 
 }

@@ -4,25 +4,47 @@ import SignUp from "./pages/signup/SignUp";
 import SignIn from "./pages/logIn/LogIn";
 import AdminDashboard from './pages/admin/AdminDashboard';
 import { Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
+const ProtectedRoute = ({ children, allowedRole }) => {
+  const userRole = sessionStorage.getItem('userRole');
 
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+  if (userRole !== allowedRole) {
+    return <Navigate to="/signIn" />;
+  }
+
+  return children;
+};
 
 function App() {
   return(
     <div className='app'>
-            <Router>
-                <Routes>
-                <Route path="/" element={<Navigate to="/clientSignUp" />} />
-                    <Route path='/admin' element={<AdminDashboard />} />
-                    <Route path="/clientSignUp" element={<SignUp />} />
-                    <Route path="/signIn" element={<SignIn/>} />
-                    <Route path="/driver/home" element={<DriverHome />} />
-                    <Route path="/manager/home" element={<ManagerHome />} />
-                </Routes>
-            </Router>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to="/clientSignUp" />} />
+          <Route path='/admin' element={<AdminDashboard />} />
+          <Route path="/clientSignUp" element={<SignUp />} />
+          <Route path="/signIn" element={<SignIn/>} />
+          <Route
+            path="/driver/home"
+            element={
+              <ProtectedRoute allowedRole="[ROLE_DRIVER]">
+                <DriverHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/manager/home"
+            element={
+              <ProtectedRoute allowedRole="[ROLE_MANAGER]">
+                <ManagerHome />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
     </div>
-  )
+  );
 }
 
 export default App;

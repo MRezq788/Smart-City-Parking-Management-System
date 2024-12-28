@@ -1,15 +1,12 @@
-package smart.city.parking.management.system.db.models;
+package smart.city.parking.management.system.db.dtos;
 
 import lombok.Data;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.List;
 
-@Component
-@Scope("prototype")
 @Data
-public class parking_lot {
+public class LotDTO {
     private int lot_id;
     private int manager_id;
     private String name;
@@ -20,4 +17,6 @@ public class parking_lot {
     private BigDecimal dynamic_weight;
     private BigDecimal disabled_discount;
     private BigDecimal ev_fees;
+    private List<SpotDTO> spots;
+
 }

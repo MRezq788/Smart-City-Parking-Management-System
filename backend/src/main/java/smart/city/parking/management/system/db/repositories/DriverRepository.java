@@ -2,6 +2,8 @@ package smart.city.parking.management.system.db.repositories;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import smart.city.parking.management.system.db.dtos.AdminPageDriverDTO;
 import smart.city.parking.management.system.db.dtos.ReportDriverDTO;
@@ -47,7 +49,7 @@ public class DriverRepository {
     public Driver findDriverByAccountId(int accountId) {
         String sql = "SELECT * FROM driver WHERE account_id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{accountId}, (rs, rowNum) -> {
-            Driver driver = new Driver(rs.getInt("driver_id"),rs.getInt("account_id"),
+            Driver driver = new Driver(rs.getInt("id"),rs.getInt("account_id"),
                     rs.getString("plate_number"), rs.getString("payment_method"),
                     rs.getInt("penalty_counter"), rs.getBoolean("is_banned"));
             return driver;

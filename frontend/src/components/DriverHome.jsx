@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Grid, Container, Paper, Box, IconButton, Typography } from '@mui/material';
+import { use, useState, useEffect } from 'react';
+import { Grid, Container, Paper, Box, IconButton, Typography , duration} from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ParkingMap from './ParkingMap';
 import ParkingLotList from './ParkingLotList';
@@ -13,15 +13,16 @@ const mockReservations = [
   {
     id: 1,
     date: '2024-12-01', // Format: YYYY-MM-DD
-    startTime: '8', // 8 AM
+    start_hour: '8', // 8 AM
     duration: 2, // 2 hours
   },
   {
     id: 2,
     date: '2024-12-01',
-    startTime: '2', // 2 PM
+    start_hour: '2', // 2 PM
     duration: 3, // 3 hours
   },
+
 ];
 
 const mockParkingLots = [
@@ -73,41 +74,67 @@ const mockParkingLots = [
       reservations: []
     }))
   },
+  
 ];
 
-function DriverHome() {
-  useEffect(() => {
-    // Fetch parking lots from the server
-    const url = 'localhost:8080/driver/parkinglots';
-    fetch(url, {
-        method: 'GET', // Explicitly specify the request method
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => setParkingLots(data))
-        .catch((error) => console.error('Error fetching parking lots:', error));   
-        
-    //Fetch notifications from the server
-    fetch(`http://localhost:8080/notifications/${id}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => setNotifications(data))
-      .catch((error) => console.error('Error fetching notifications:', error));
-  });
 
+function DriverHome() {
+  const fetchParkingLots = async () => {
+    try {
+      const token = sessionStorage.getItem('token');
+
+      const response = await fetch('http://localhost:8080/driver/parkinglots', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setParkingLots(data);
+    } catch (error) {
+      console.error('Error fetching parking lots:', error);
+    }
+  };
+  const reserveSpot = async (selectedSpotId, reservation) => {
+    const res = {
+      spot_id: selectedSpotId,
+      driver_id: sessionStorage.getItem('driverId'),
+      start_hour: parseInt(reservation.start_hour),
+      duration: reservation.duration,
+      date: reservation.date,
+      is_arrived:false,
+      is_notified:false,
+    }
+    console.log(res);
+    try {
+      const token = sessionStorage.getItem('token');
+
+      const url = `http://localhost:8080/driver/reserve/spot`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(res),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Reservation successful:', data);
+      return data;
+    } catch (error) {
+      console.error('Error submitting reservation:', error);
+    }
+  };
 
   const [parkingLots, setParkingLots] = useState(mockParkingLots);
   const [selectedLot, setSelectedLot] = useState(null);
@@ -117,6 +144,62 @@ function DriverHome() {
   const [reservationError, setReservationError] = useState('');
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
+
+  useEffect(() => {
+    fetchParkingLots();
+  },[parkingLots]);
+
+  useEffect(() => {
+    //Fetch notifications from the server
+    const token = sessionStorage.getItem('token');
+    const id = sessionStorage.getItem('userId');
+        fetch(`http://localhost:8080/notifications/${id}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => setNotifications(data))
+          .catch((error) => console.error('Error fetching notifications:', error));
+
+    // WebSocket for real-time updates
+    const ws = new WebSocket('ws://localhost:8765');
+
+    ws.onmessage = (event) => {
+      const updatedSpot = JSON.parse(event.data);
+
+      setParkingLots((prevLots) =>
+        prevLots.map((lot) => ({
+          ...lot,
+          spots: lot.spots.map((spot) =>
+            spot.id === updatedSpot.id ? { ...spot, status: updatedSpot.status } : spot
+          ),
+        }))
+      );
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      console.error('Error details:', {
+        isTrusted: error.isTrusted,
+        type: error.type,
+        target: error.target,
+        currentTarget: error.currentTarget,
+        eventPhase: error.eventPhase,
+      });
+    };
+
+    // Cleanup on component unmount
+    return () => {
+      ws.close();
+    };
+  }, []);
 
   const handleLotSelect = (lot) => {
     setSelectedLot(lot);
@@ -128,37 +211,37 @@ function DriverHome() {
   };
 
   const handleReservation = (reservation) => {
+    // Check for time conflicts
     if (hasTimeConflict(selectedSpot.reservations, reservation)) {
       setReservationError('This time slot conflicts with an existing reservation');
       return;
     }
 
+    
     if (!selectedLot) return;
+    // Update spot's reservations
     const updatedSpots = selectedLot.spots.map(spot => {
-      if (spot.id === selectedSpot.id) {
-        if (spot.status !== 'occupied') {
-          return { ...spot, reservations: [...spot.reservations, reservation], status: 'reserved' };
+      if (spot.spot_id === selectedSpot.spot_id) {
+        // Check if the selected spot is available
+        if (spot.status != 'occupied') {
+          return { 
+            ...spot, 
+            reservations: [...spot.reservations, reservation], 
+            status: 'reserved' 
+          };
         } else {
-          return { ...spot, reservations: [...spot.reservations, reservation] };
+          return { 
+            ...spot, 
+            reservations: [...spot.reservations, reservation]
+          };
         }
       }
       return spot;
     });
 
+  
     setSelectedLot({ ...selectedLot, spots: updatedSpots });
-
-    const url = `localhost:8080/driver/reserve/spot/${selectedSpot.id}`;
-    fetch(url, {
-      method: 'POST',
-      body: JSON.stringify(reservation),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .catch((error) => console.error('Error submitting reservation:', error));
+    reserveSpot(selectedSpot.spot_id,reservation);
 
     setReservationError('');
     setIsModalOpen(false);

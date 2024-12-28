@@ -20,7 +20,7 @@ import javax.crypto.SecretKey;
 public class JWTService {
 
     private String SECRET_KEY = "";
-    private static final int EXPIRATION_TIME = 30 * 60 * 1000; // 30 mins in milliseconds
+    private static final int EXPIRATION_TIME = 30 * 60 * 1000*10; // 300 mins in milliseconds
 
     public JWTService() {
 

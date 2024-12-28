@@ -29,23 +29,45 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
 
     if (spot?.type === "disabled") {
       return lot.original_price * (1 - lot.disabled_discount) * lot.dynamic_weight;
-    } else if (spot?.type === "ev") {
-      return lot.original_price * (1 + lot.ev_fees) * lot.dynamic_weight;
-    } else {
+    } else if (spot?.type === "regular") {
       return lot.original_price * lot.dynamic_weight;
+    } else {
+      return lot.original_price * (1 + lot.ev_fees) * lot.dynamic_weight;
     }
   };
 
   const updateSpot = async (updatedSpot) => {
     try {
-      const response = await fetch(`http://localhost:8080/spots/${updatedSpot.id}`, {
+      const token = sessionStorage.getItem('token'); 
+      const response = await fetch(`http://localhost:8080/manager/update/spot`, {
         method: 'PUT',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedSpot),
       });
+      console.log(updatedSpot);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error updating spot:', error);
+    }
+  };
 
+  const deleteReservation = async (reservation) => {
+    try {
+      const token = sessionStorage.getItem('token'); 
+      const response = await fetch(`http://localhost:8080/manager/delete/reservation`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reservation),
+      });
+      // console.log(reservation);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -56,7 +78,7 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
 
   const handleDeleteReservation = (index) => {
     const updatedReservations = [...reservations];
-    updatedReservations.splice(index, 1);
+    const [deletedReservation] = updatedReservations.splice(index, 1);
     setReservations(updatedReservations);
 
     if (updatedReservations.length === 0 && spot.status === 'reserved') {
@@ -64,8 +86,8 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
     }
 
     const updatedSpot = { ...spot, reservations: updatedReservations };
-    console.log(updatedSpot);
-    updateSpot(updatedSpot);
+    // console.log(updatedSpot);
+    deleteReservation(deletedReservation);
   };
 
   const handleToggleStatus = () => {
@@ -76,7 +98,7 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
     }
 
     const updatedSpot = { ...spot, reservations };
-    console.log(updatedSpot);
+    // console.log(updatedSpot);
     updateSpot(updatedSpot);
 
     onClose();
@@ -109,24 +131,23 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
           }}
         >
           {reservations.length > 0 ? (
-            // Sort the reservations by date and then startTime before mapping
             [...reservations]
               .sort((a, b) => {
                 const dateA = new Date(a.date);
                 const dateB = new Date(b.date);
-
+                
                 if (dateA - dateB !== 0) {
-                  return dateA - dateB; // Sort by date first
+                  return dateA - dateB;
                 }
-
-                return new Date(a.startTime) - new Date(b.startTime); // Then by startTime if dates are the same
+                
+                return a.start_hour - b.start_hour;
               })
               .map((reservation, index) => (
                 <div key={index}>
                   <ListItem>
                     <ListItemText
                       primary={format(new Date(reservation.date), 'PP')}
-                      secondary={`Time: ${format(new Date(reservation.startTime), 'p')} | Duration: ${reservation.duration} hours`}
+                      secondary={`Time: ${reservation.start_hour}:00 | Duration: ${reservation.duration} hours`}
                     />
                     {!isDriver && (
                       <Button
