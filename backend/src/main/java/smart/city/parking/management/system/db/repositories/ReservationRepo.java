@@ -13,9 +13,9 @@ public class ReservationRepo {
     private JdbcTemplate jdbcTemplate;
 
     public void addReservation(reservation reservation) {
-        jdbcTemplate.update("INSERT INTO reservation (spot_id, driver_id, start_hour, duration, date, is_arrived) VALUES (?,?,?,?,?,?)",
+        jdbcTemplate.update("INSERT INTO reservation (spot_id, driver_id, start_hour, duration, date, is_arrived, is_notified) VALUES (?,?,?,?,?,?,?)",
                 reservation.getSpot_id(), reservation.getDriver_id(), reservation.getStart_hour(),
-                reservation.getDuration(), reservation.getDate(), reservation.is_arrived());
+                reservation.getDuration(), reservation.getDate(), reservation.is_arrived(), reservation.is_notified());
     }
     public void deleteReservationById(int reservationId) {
         String sql = "DELETE FROM reservation WHERE reservation_id = ?";
@@ -32,6 +32,7 @@ public class ReservationRepo {
             res.setDuration(rs.getInt("duration"));
             res.setDate(rs.getDate("date"));
             res.set_arrived(rs.getBoolean("is_arrived"));
+            res.set_notified(rs.getBoolean("is_notified"));
             return res;
         });
     }
@@ -62,6 +63,7 @@ public class ReservationRepo {
             reservation.setDuration(rs.getInt("duration"));
             reservation.setDate(rs.getDate("date"));
             reservation.set_arrived(rs.getBoolean("is_arrived"));
+            reservation.set_notified(rs.getBoolean("is_notified"));
             return reservation;
         });
     }

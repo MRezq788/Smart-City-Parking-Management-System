@@ -16,4 +16,5 @@ public class reservation {
     private int duration;
     private Date date;
     private boolean is_arrived;
+    private boolean is_notified;
 }
