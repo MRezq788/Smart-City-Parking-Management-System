@@ -5,6 +5,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import smart.city.parking.management.system.db.enums.SpotStatus;
+import smart.city.parking.management.system.db.models.Driver;
 import smart.city.parking.management.system.db.models.Notification;
 import smart.city.parking.management.system.db.models.parking_spot;
 import smart.city.parking.management.system.db.models.reservation;
@@ -39,7 +40,7 @@ public class ScheduledNotificationService {
 
         for (reservation r : activeReservations) {
             long currentTime = System.currentTimeMillis();
-            if (currentTime >= (r.getStart_hour() + r.getDuration()) - 600000*5 && !r.is_notified()) { // 10 minutes before expiry
+            if (currentTime >= (r.getStart_hour() + r.getDuration()) - 600000 && !r.is_notified()) { // 10 minutes before expiry
                 //notificationService.sendTimeExpiryReminder(reservation.getUserId());
                 Notification notification = new Notification();
                 notification.setAccountId(driverRepository.findDriverById(r.getDriver_id()).accountId());
@@ -53,6 +54,10 @@ public class ScheduledNotificationService {
 
             // Check 1 minute before expiry and spot status
             if (currentTime >= (r.getStart_hour() + r.getDuration() - 60000) && !r.is_arrived()) { // minute before expiry
+                Driver driver = driverRepository.findDriverById(r.getDriver_id());
+                Driver newDriver = new Driver(driver.id(), driver.accountId(), driver.plateNumber(),
+                        driver.paymentMethod(), driver.penaltyCounter()+1, driver.isBanned());
+                driverRepository.updateDriver(driver);
                 parking_spot spot = spotRepo.findSpotById(r.getSpot_id());
                 String spotStatus = spot.getStatus().toString();
                 if (!"occupied".equalsIgnoreCase(spotStatus)) { // If spot is not occupied

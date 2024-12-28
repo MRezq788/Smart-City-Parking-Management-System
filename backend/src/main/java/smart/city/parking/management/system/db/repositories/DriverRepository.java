@@ -49,7 +49,7 @@ public class DriverRepository {
     public Driver findDriverByAccountId(int accountId) {
         String sql = "SELECT * FROM driver WHERE account_id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{accountId}, (rs, rowNum) -> {
-            Driver driver = new Driver(rs.getInt("id"),rs.getInt("account_id"),
+            Driver driver = new Driver(rs.getInt("id"), rs.getInt("account_id"),
                     rs.getString("plate_number"), rs.getString("payment_method"),
                     rs.getInt("penalty_counter"), rs.getBoolean("is_banned"));
             return driver;
@@ -59,13 +59,12 @@ public class DriverRepository {
     public Driver findDriverById(int id) {
         String sql = "SELECT * FROM driver WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
-            Driver driver = new Driver(rs.getInt("id"),rs.getInt("account_id"),
+            Driver driver = new Driver(rs.getInt("id"), rs.getInt("account_id"),
                     rs.getString("plate_number"), rs.getString("payment_method"),
                     rs.getInt("penalty_counter"), rs.getBoolean("is_banned"));
             return driver;
         });
     }
-
 
 
     public List<AdminPageDriverDTO> findAllDriversWithPages(int page, int size) {
@@ -75,7 +74,7 @@ public class DriverRepository {
 
     public List<AdminPageDriverDTO> searchDrivers(String searchTerm, int page, int size) {
         String sql = "CALL search_drivers_paginated(?, ?, ?)";
-        return jdbcTemplate.query(sql, new AdminDriverRowMapper(), searchTerm, page,  size);
+        return jdbcTemplate.query(sql, new AdminDriverRowMapper(), searchTerm, page, size);
     }
 
     public void banDriver(int driverId) {
@@ -90,14 +89,21 @@ public class DriverRepository {
 
     public List<ReportDriverDTO> findTop20DriversByReservations() {
         String sql = """
-            SELECT a.username, a.full_name, d.plate_number
-            FROM driver d
-            INNER JOIN account a ON d.account_id = a.account_id
-            LEFT JOIN reservation r ON d.id = r.driver_id
-            GROUP BY a.username, a.full_name, d.plate_number
-            ORDER BY COUNT(r.reservation_id) DESC
-            LIMIT 20
-        """;
+                    SELECT a.username, a.full_name, d.plate_number
+                    FROM driver d
+                    INNER JOIN account a ON d.account_id = a.account_id
+                    LEFT JOIN reservation r ON d.id = r.driver_id
+                    GROUP BY a.username, a.full_name, d.plate_number
+                    ORDER BY COUNT(r.reservation_id) DESC
+                    LIMIT 20
+                """;
         return jdbcTemplate.query(sql, new ReportDriverMapper());
+    }
+
+
+    public void updateDriver(Driver driver) {
+        String sql = "UPDATE driver SET plate_number = ?, payment_method = ?, penalty_counter = ?, is_banned = ? WHERE id = ?";
+        jdbcTemplate.update(sql, driver.plateNumber(), driver.paymentMethod(), driver.penaltyCounter(), driver.isBanned(), driver.id());
+
     }
 }
