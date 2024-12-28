@@ -210,6 +210,12 @@ function DriverHome() {
     setIsSpotDetailsOpen(true);
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('token');
+    sessionStorage.clear();
+    window.location.href = '/signin';
+};
+
   const handleReservation = (reservation) => {
     // Check for time conflicts
     if (hasTimeConflict(selectedSpot.reservations, reservation)) {
@@ -270,6 +276,7 @@ function DriverHome() {
         alignItems: 'center'
       }}>
         <Typography variant="h6">Smart City Parking</Typography>
+        <a href="#" onClick={handleLogout} style={{ color: 'white', textDecoration: 'underline', marginLeft: 'auto' }}>Logout</a>
         <IconButton color="inherit" onClick={toggleNotificationList}>
           <NotificationsIcon />
         </IconButton>

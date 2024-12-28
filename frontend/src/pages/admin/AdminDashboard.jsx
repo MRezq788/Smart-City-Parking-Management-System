@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import './AdminDashboard.css';
+import { Box, Typography} from '@mui/material';
+
 
 const AdminDashboard = () => {
     const [drivers, setDrivers] = useState([]);
@@ -79,6 +81,12 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleLogout = () => {
+        sessionStorage.removeItem('token');
+        sessionStorage.clear();
+        window.location.href = '/signin';
+    };
+
     const renderDrivers = () => (
         <div>
             {drivers.length==0 && <h1>No Drivers Found</h1>}
@@ -110,6 +118,19 @@ const AdminDashboard = () => {
 
     return (
         <div className="admin-dashboard">
+            <Box sx={{
+                backgroundColor: '#162852',
+                color: 'white',
+                padding: '10px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '10px',
+            }}>
+                <Typography variant="h6">Smart City Parking</Typography>
+                <Typography variant="h6" style={{margin: 'auto'}}>Admin Dashboard</Typography>
+                <a href="#" onClick={handleLogout} style={{ color: 'white', textDecoration: 'underline', marginLeft: 'auto' }}>Logout</a>
+            </Box>
             <div className="header">
                 <button className={view === 'drivers' ? 'active' : ''} onClick={() => setView('drivers')}>Drivers</button>
                 <button className={view === 'lots' ? 'active' : ''} onClick={() => setView('lots')}>Parking Lots</button>

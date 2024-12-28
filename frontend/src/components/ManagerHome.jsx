@@ -204,6 +204,12 @@ function ManagerHome() {
 
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('token');
+    sessionStorage.clear();
+    window.location.href = '/signin';
+};
+
   const toggleNotificationList = () => {
     setShowNotifications(!showNotifications);
   };
@@ -222,6 +228,7 @@ function ManagerHome() {
         }}
       >
         <Typography variant="h6">Smart City Parking - Manager</Typography>
+        <a href="#" onClick={handleLogout} style={{ color: 'white', textDecoration: 'underline', marginLeft: 'auto' }}>Logout</a>
         <IconButton color="inherit" onClick={toggleNotificationList}>
           <NotificationsIcon />
         </IconButton>

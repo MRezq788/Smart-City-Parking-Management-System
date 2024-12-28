@@ -22,9 +22,16 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Navigate to="/clientSignUp" />} />
-          <Route path='/admin' element={<AdminDashboard />} />
           <Route path="/clientSignUp" element={<SignUp />} />
           <Route path="/signIn" element={<SignIn/>} />
+          <Route
+            path='/admin'
+            element={
+              <ProtectedRoute allowedRole="[ROLE_ADMIN]">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/driver/home"
             element={

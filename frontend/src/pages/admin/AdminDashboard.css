@@ -7,18 +7,20 @@
 
 .header {
     display: flex;
-    justify-content: space-between;
     margin-bottom: 20px;
 }
 
 .header input {
     padding: 10px;
     font-size: 16px;
+    margin-left: auto;
+    flex: 1;
 }
 
 .header button {
     padding: 10px 15px;
     margin-left: 10px;
+    margin-right: 5px;
     cursor: pointer;
 }
 
