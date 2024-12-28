@@ -38,11 +38,11 @@ function NewParkingLotForm({ onSubmit }) {
     }
 
     const spots = [
-      ...Array(parseInt(regularSpots)).fill().map((_, i) => ({ id: i, type: 'regular', status: 'available', reservations: [] })),
+      ...Array(parseInt(regularSpots)).fill().map((_, i) => ({ spot_id: i, type: 'regular', status: 'available', reservations: [] })),
       ...Array(parseInt(disabledSpots)).fill().map((_, i) => 
-        ({ id: i + parseInt(regularSpots), type: 'disabled', status: 'available', reservations: [] })),
+        ({ spot_id: i + parseInt(regularSpots), type: 'disabled', status: 'available', reservations: [] })),
       ...Array(parseInt(evSpots)).fill().map((_, i) => 
-        ({ id: i + parseInt(regularSpots) + parseInt(disabledSpots), type: 'ev', status: 'available', reservations: [] })),
+        ({ spot_id: i + parseInt(regularSpots) + parseInt(disabledSpots), type: 'ev', status: 'available', reservations: [] })),
     ];
 
     const newLot = {
@@ -69,21 +69,23 @@ function NewParkingLotForm({ onSubmit }) {
     setDisabledSpots('');
     setEvSpots('');
 
-    const url = 'localhost:8080/manager/add/lot';
-    fetch(url, {
-      method: 'POST', // Explicitly specify the request method
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newLot),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .catch((error) => console.error('Error adding new lot:', error));
+    const url = 'http://localhost:8080/manager/add/lot';
+    const token = sessionStorage.getItem('token');
+    // fetch(url, {
+    //   method: 'POST', // Explicitly specify the request method
+    //   headers: {
+    //     'Authorization': `Bearer ${token}`,
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(newLot),
+    // })
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       throw new Error(`HTTP error! Status: ${response.status}`);
+    //     }
+    //     return response.json();
+    //   })
+    //  .catch((error) => console.error('Error adding new lot:', error));
   };
 
   return (

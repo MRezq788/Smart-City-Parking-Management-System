@@ -47,7 +47,7 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
         },
         body: JSON.stringify(updatedSpot),
       });
-      // console.log(updatedSpot);
+      console.log(updatedSpot);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }

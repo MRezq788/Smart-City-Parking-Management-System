@@ -96,4 +96,10 @@ public class ReservationRepo {
         jdbcTemplate.update("DELETE FROM reservation WHERE reservation_id = ?", reservationId);
     }
 
+    public void updateReservation(reservation reservation) {
+        jdbcTemplate.update("UPDATE reservation SET spot_id = ?, driver_id = ?, start_hour = ?, duration = ?, date = ?, is_arrived = ?, is_notified = ? WHERE reservation_id = ?",
+                reservation.getSpot_id(), reservation.getDriver_id(), reservation.getStart_hour(),
+                reservation.getDuration(), reservation.getDate(), reservation.is_arrived(), reservation.is_notified(), reservation.getReservation_id());
+    }
+
 }

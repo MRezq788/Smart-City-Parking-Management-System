@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import smart.city.parking.management.system.db.repositories.AccountRepository;
+import smart.city.parking.management.system.db.repositories.DriverRepository;
 import smart.city.parking.management.system.db.services.JWTService;
 
 @RestController
@@ -19,6 +20,9 @@ public class SignInController {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private DriverRepository driverRepository;
 
     public SignInController(JWTService jwtService, AccountRepository accountRepository) {
         this.jwtService = jwtService;
@@ -42,7 +46,11 @@ public class SignInController {
 
             // Extract account_id from the database
             int id = accountRepository.findIdByUsername(userDetails.getUsername());
+            int driverId = -1;
 
+            if(roles.equals("[ROLE_DRIVER]")) {
+                driverId = driverRepository.findDriverByAccountId(id).id();
+            }
             // Generate the JWT
             String token = jwtService.generateToken(userDetails.getUsername());
 
@@ -50,6 +58,7 @@ public class SignInController {
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("id", id);
+            response.put("driverId", driverId);
             response.put("role", roles);
 
             return ResponseEntity.ok(response);

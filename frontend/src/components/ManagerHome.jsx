@@ -94,6 +94,7 @@ const mockParkingLots = [
 
 function ManagerHome() {
 
+
   const fetchManagerLots = async () => {
     try {
       const token = sessionStorage.getItem('token');
@@ -134,6 +135,8 @@ function ManagerHome() {
     // console.log(lot);
     try {
       const token = sessionStorage.getItem('token');
+      console.log(token);
+      console.log(lot);
 
       const url = `http://localhost:8080/manager/add/lot`;
       const response = await fetch(url, {
@@ -160,6 +163,23 @@ function ManagerHome() {
 
   useEffect(() => {
     fetchManagerLots();
+    // Fetch notifications from the server
+    const token = sessionStorage.getItem('token');
+    const id = sessionStorage.getItem('userId');
+        fetch(`http://localhost:8080/notifications/${id}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => setNotifications(data))
+          .catch((error) => console.error('Error fetching notifications:', error));
   });
 
   const [parkingLots, setParkingLots] = useState(mockParkingLots);
@@ -212,8 +232,8 @@ function ManagerHome() {
           <Paper
             sx={{
               p: 2,
-              maxHeight: 400, // Adjust the height limit as needed
-              overflowY: 'auto', // Enable vertical scrolling
+              maxHeight: 400,
+              overflowY: 'auto',
             }}
           >
             <ParkingLotList

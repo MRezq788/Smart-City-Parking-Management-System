@@ -39,7 +39,7 @@ public class ScheduledNotificationService {
 
         for (reservation r : activeReservations) {
             long currentTime = System.currentTimeMillis();
-            if (currentTime >= (r.getStart_hour() + r.getDuration()) - 600000 && !r.is_notified()) { // 10 minutes before expiry
+            if (currentTime >= (r.getStart_hour() + r.getDuration()) - 600000*5 && !r.is_notified()) { // 10 minutes before expiry
                 //notificationService.sendTimeExpiryReminder(reservation.getUserId());
                 Notification notification = new Notification();
                 notification.setAccountId(driverRepository.findDriverById(r.getDriver_id()).accountId());

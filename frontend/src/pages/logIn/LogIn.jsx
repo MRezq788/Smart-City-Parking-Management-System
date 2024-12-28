@@ -44,11 +44,12 @@ const Login = () => {
 
       login({
         id: parsedToken.id,
+        driverId: parsedToken.driverId,
         token: parsedToken.token,
         role: parsedToken.role
       });
 
-      sessionStorage.setItem('token', parsedToken.token);
+      //sessionStorage.setItem('token', parsedToken.token);
       // Now you can check the role in the parsed token
       if (parsedToken.role === '[ROLE_DRIVER]') {
         navigate('/driver/home');
