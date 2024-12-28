@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import smart.city.parking.management.system.db.dtos.AdminPageDriverDTO;
+import smart.city.parking.management.system.db.dtos.ReportDriverDTO;
 import smart.city.parking.management.system.db.models.Account;
 import smart.city.parking.management.system.db.models.Driver;
 
@@ -83,5 +84,18 @@ public class DriverRepository {
     public void unbanDriver(int driverId) {
         String sql = "CALL unban_driver(?)";
         jdbcTemplate.update(sql, driverId);
+    }
+
+    public List<ReportDriverDTO> findTop20DriversByReservations() {
+        String sql = """
+            SELECT a.username, a.full_name, d.plate_number
+            FROM driver d
+            INNER JOIN account a ON d.account_id = a.account_id
+            LEFT JOIN reservation r ON d.id = r.driver_id
+            GROUP BY a.username, a.full_name, d.plate_number
+            ORDER BY COUNT(r.reservation_id) DESC
+            LIMIT 20
+        """;
+        return jdbcTemplate.query(sql, new ReportDriverMapper());
     }
 }

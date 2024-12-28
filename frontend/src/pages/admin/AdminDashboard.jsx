@@ -63,6 +63,22 @@ const AdminDashboard = () => {
         fetchData();
     };
 
+    const handleDownload = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/report/admin');
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'adminPageDriversReport.pdf';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } catch (error) {
+            console.error('Error downloading the report:', error);
+        }
+    };
+
     const renderDrivers = () => (
         <div>
             {drivers.length==0 && <h1>No Drivers Found</h1>}
@@ -97,6 +113,7 @@ const AdminDashboard = () => {
             <div className="header">
                 <button className={view === 'drivers' ? 'active' : ''} onClick={() => setView('drivers')}>Drivers</button>
                 <button className={view === 'lots' ? 'active' : ''} onClick={() => setView('lots')}>Parking Lots</button>
+                <button onClick={handleDownload}>Download Report</button>
                 <input
                     type="text"
                     placeholder="Search..."

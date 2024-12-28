@@ -27,7 +27,7 @@ public class SecurityConfiguration {
     private JwtFilter jwtFilter;
     @Autowired
     private CorsConfig corsConfig;
-    
+
     public SecurityConfiguration(JwtFilter jwtFilter, CorsConfig corsConfig) {
         this.jwtFilter = jwtFilter;
         this.corsConfig = corsConfig;
@@ -42,11 +42,12 @@ public class SecurityConfiguration {
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore((Filter) jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(configurer -> configurer
-                    // .requestMatchers(HttpMethod.POST, "/auth/testo").hasRole("USER") 
+                    // .requestMatchers(HttpMethod.POST, "/auth/testo").hasRole("USER")
                     .requestMatchers(HttpMethod.POST, "/signin").permitAll()
                     .requestMatchers(HttpMethod.POST, "/signup/add").permitAll()
                     .requestMatchers(HttpMethod.POST, "/drivers/add").permitAll()
                     .requestMatchers("/admin/**").hasRole("ADMIN")
+                    .requestMatchers("/report/**").permitAll()
                     .anyRequest().authenticated() // Secure all other APIs
 //                     .anyRequest().permitAll()
                 )
@@ -56,7 +57,7 @@ public class SecurityConfiguration {
     @Bean
     public UserDetailsService userDetailsManager(DataSource dataSource) {
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
-    
+
         // Define query to retrieve a user by username
         jdbcUserDetailsManager.setUsersByUsernameQuery(
                 "SELECT username, password, " +
@@ -64,16 +65,16 @@ public class SecurityConfiguration {
                 "true as enabled " +
                 "FROM Account " +
                 "WHERE username = ?");
-    
+
         // Define query to retrieve the authorities/roles by username
         jdbcUserDetailsManager.setAuthoritiesByUsernameQuery(
-                "SELECT username, role " + 
+                "SELECT username, role " +
                 "FROM Account " +
                 "WHERE username = ?");
-    
+
         return jdbcUserDetailsManager;
     }
-    
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -89,5 +90,5 @@ public class SecurityConfiguration {
         provider.setPasswordEncoder(encoder);
         return new ProviderManager(provider);
     }
-    
+
 }
