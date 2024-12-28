@@ -48,11 +48,14 @@ const Login = () => {
         role: parsedToken.role
       });
 
+      sessionStorage.setItem('token', parsedToken.token);
       // Now you can check the role in the parsed token
       if (parsedToken.role === '[ROLE_DRIVER]') {
         navigate('/driver/home');
-      } else {
+      } else if (parsedToken.role === '[ROLE_MANAGER]') {
         navigate('/manager/home');
+      }else {
+        navigate('/admin')
       }
 
     } catch (error) {

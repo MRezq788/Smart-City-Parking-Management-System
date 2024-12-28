@@ -1,9 +1,11 @@
-import { use, useState, useEffect } from 'react';
-import { Grid, Container, Paper } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Grid, Container, Paper, Box, IconButton, Typography } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import ParkingLotList from './ParkingLotList';
 import SpotList from './SpotList';
 import SpotDetails from './SpotDetails';
 import NewParkingLotForm from './NewParkingLotForm';
+import NotificationList from './NotificationList';
 
 const mockReservations = [
     {
@@ -96,7 +98,7 @@ function ManagerHome() {
     try {
       const token = sessionStorage.getItem('token');
       const id = sessionStorage.getItem('userId');
-  
+
       const response = await fetch(`http://localhost:8080/manager/${id}/parkinglots`, {
         method: 'GET',
         headers: {
@@ -104,11 +106,11 @@ function ManagerHome() {
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
+
       const data = await response.json();
       setParkingLots(data);
     } catch (error) {
@@ -131,8 +133,8 @@ function ManagerHome() {
     }
     // console.log(lot);
     try {
-      const token = sessionStorage.getItem('token'); 
-  
+      const token = sessionStorage.getItem('token');
+
       const url = `http://localhost:8080/manager/add/lot`;
       const response = await fetch(url, {
         method: 'POST',
@@ -142,11 +144,11 @@ function ManagerHome() {
         },
         body: JSON.stringify(lot),
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
+
       const data = await response.json();
       console.log('Lot Added successful:', data);
 
@@ -154,16 +156,18 @@ function ManagerHome() {
       console.error('Error submitting reservation:', error);
     }
   };
-  
+
 
   useEffect(() => {
-    fetchManagerLots();    
+    fetchManagerLots();
   });
 
   const [parkingLots, setParkingLots] = useState(mockParkingLots);
   const [selectedLot, setSelectedLot] = useState(null);
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [isSpotDetailsOpen, setIsSpotDetailsOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+   const [showNotifications, setShowNotifications] = useState(false);
 
   const handleLotSelect = (lot) => {
     setSelectedLot(lot);
@@ -180,9 +184,29 @@ function ManagerHome() {
 
   };
 
+  const toggleNotificationList = () => {
+    setShowNotifications(!showNotifications);
+  };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      {/* Blue Bar */}
+      <Box
+        sx={{
+          backgroundColor: '#162852',
+          color: 'white',
+          padding: '10px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <Typography variant="h6">Smart City Parking - Manager</Typography>
+        <IconButton color="inherit" onClick={toggleNotificationList}>
+          <NotificationsIcon />
+        </IconButton>
+      </Box>
+
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Paper
@@ -199,14 +223,14 @@ function ManagerHome() {
           </Paper>
         </Grid>
         <Grid item xs={12} md={6}>
-            <NewParkingLotForm onSubmit={handleNewLotSubmit} />
+          <NewParkingLotForm onSubmit={handleNewLotSubmit} />
         </Grid>
         {selectedLot && (
           <Grid item xs={12}>
-            <Paper 
+            <Paper
               sx={{
                 p: 2,
-                maxHeight: 770, 
+                maxHeight: 770,
                 overflowY: 'auto',
               }}
             >
@@ -218,6 +242,13 @@ function ManagerHome() {
             </Paper>
           </Grid>
         )}
+
+        {/* Notifications */}
+        {showNotifications && (
+          <Grid item xs={12}>
+            <NotificationList notifications={notifications} />
+          </Grid>
+        )}
       </Grid>
 
       <SpotDetails
@@ -225,10 +256,9 @@ function ManagerHome() {
         spot={selectedSpot}
         open={isSpotDetailsOpen}
         onClose={() => setIsSpotDetailsOpen(false)}
-        onReserve={()=>setIsSpotDetailsOpen(false)}
+        onReserve={() => setIsSpotDetailsOpen(false)}
         isDriver={false}
       />
-
     </Container>
   );
 }

@@ -51,4 +51,21 @@ public class SpotRepo {
             return parkingSpot;
         });
     }
+
+    public parking_spot findSpotById(int spotId) {
+        String sql = "SELECT * FROM parking_spot WHERE spot_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{spotId}, (rs, rowNum) -> {
+            parking_spot parkingSpot = new parking_spot();
+            parkingSpot.setSpot_id(rs.getInt("spot_id"));
+            parkingSpot.setLot_id(rs.getInt("lot_id"));
+            parkingSpot.setType(SpotType.valueOf(rs.getString("type")));
+            parkingSpot.setStatus(SpotStatus.valueOf(rs.getString("status")));
+            return parkingSpot;
+        });
+    }
+
+    public void updateSpot(parking_spot parkingSpot) {
+        jdbcTemplate.update("UPDATE parking_spot SET lot_id = ?, type = ?, status = ? WHERE spot_id = ?",
+                parkingSpot.getLot_id(), parkingSpot.getType().toString(), parkingSpot.getStatus().toString(), parkingSpot.getSpot_id());
+    }
 }

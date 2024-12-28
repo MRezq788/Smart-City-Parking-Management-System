@@ -2,14 +2,12 @@ package smart.city.parking.management.system.db.repositories;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import smart.city.parking.management.system.db.dtos.AdminPageDriverDTO;
 import smart.city.parking.management.system.db.models.Account;
 import smart.city.parking.management.system.db.models.Driver;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.util.List;
 
 @Repository
 public class DriverRepository {
@@ -43,5 +41,47 @@ public class DriverRepository {
             jdbcTemplate.execute("ROLLBACK");
             throw new RuntimeException("Failed to add driver and account. Transaction rolled back.", e);
         }
+    }
+
+    public Driver findDriverByAccountId(int accountId) {
+        String sql = "SELECT * FROM driver WHERE account_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{accountId}, (rs, rowNum) -> {
+            Driver driver = new Driver(rs.getInt("driver_id"),rs.getInt("account_id"),
+                    rs.getString("plate_number"), rs.getString("payment_method"),
+                    rs.getInt("penalty_counter"), rs.getBoolean("is_banned"));
+            return driver;
+        });
+    }
+
+    public Driver findDriverById(int id) {
+        String sql = "SELECT * FROM driver WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
+            Driver driver = new Driver(rs.getInt("id"),rs.getInt("account_id"),
+                    rs.getString("plate_number"), rs.getString("payment_method"),
+                    rs.getInt("penalty_counter"), rs.getBoolean("is_banned"));
+            return driver;
+        });
+    }
+
+
+
+    public List<AdminPageDriverDTO> findAllDriversWithPages(int page, int size) {
+        String sql = "CALL get_all_drivers_paginated(?, ?)";
+        return jdbcTemplate.query(sql, new AdminDriverRowMapper(), page, size);
+    }
+
+    public List<AdminPageDriverDTO> searchDrivers(String searchTerm, int page, int size) {
+        String sql = "CALL search_drivers_paginated(?, ?, ?)";
+        return jdbcTemplate.query(sql, new AdminDriverRowMapper(), searchTerm, page,  size);
+    }
+
+    public void banDriver(int driverId) {
+        String sql = "CALL ban_driver(?)";
+        jdbcTemplate.update(sql, driverId);
+    }
+
+    public void unbanDriver(int driverId) {
+        String sql = "CALL unban_driver(?)";
+        jdbcTemplate.update(sql, driverId);
     }
 }

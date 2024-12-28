@@ -44,8 +44,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(configurer -> configurer
                     // .requestMatchers(HttpMethod.POST, "/auth/testo").hasRole("USER") 
                     .requestMatchers(HttpMethod.POST, "/signin").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/signup/add").permitAll() 
-                    .requestMatchers(HttpMethod.POST, "/drivers/add").permitAll() 
+                    .requestMatchers(HttpMethod.POST, "/signup/add").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/drivers/add").permitAll()
+                    .requestMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated() // Secure all other APIs
 //                     .anyRequest().permitAll()
                 )
