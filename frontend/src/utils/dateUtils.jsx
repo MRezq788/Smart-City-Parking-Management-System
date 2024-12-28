@@ -1,11 +1,11 @@
 import { addHours, isBefore, isAfter, isEqual, isSameDay } from 'date-fns';
 
 export function hasTimeConflict(existingReservations, newReservation) {
-  const newStartTime = new Date(newReservation.startTime);
+  const newStartTime = new Date(newReservation.start_hour);
   const newEndTime = addHours(newStartTime, newReservation.duration);
 
   return existingReservations.some(reservation => {
-    const existingStartTime = new Date(reservation.startTime);
+    const existingStartTime = new Date(reservation.start_hour);
     const existingEndTime = addHours(existingStartTime, reservation.duration);
 
     if (!isSameDay(reservation.date, newReservation.date)) {
