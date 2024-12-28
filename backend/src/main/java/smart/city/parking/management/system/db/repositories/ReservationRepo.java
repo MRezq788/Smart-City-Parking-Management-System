@@ -17,6 +17,24 @@ public class ReservationRepo {
                 reservation.getSpot_id(), reservation.getDriver_id(), reservation.getStart_hour(),
                 reservation.getDuration(), reservation.getDate(), reservation.is_arrived());
     }
+    public void deleteReservationById(int reservationId) {
+        String sql = "DELETE FROM reservation WHERE reservation_id = ?";
+        jdbcTemplate.update(sql, reservationId);
+    }
+    public reservation findReservationById(int reservationId) {
+        String sql = "SELECT * FROM reservation WHERE reservation_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{reservationId}, (rs, rowNum) -> {
+            reservation res = new reservation();
+            res.setReservation_id(rs.getInt("reservation_id"));
+            res.setSpot_id(rs.getInt("spot_id"));
+            res.setDriver_id(rs.getInt("driver_id"));
+            res.setStart_hour(rs.getInt("start_hour"));
+            res.setDuration(rs.getInt("duration"));
+            res.setDate(rs.getDate("date"));
+            res.set_arrived(rs.getBoolean("is_arrived"));
+            return res;
+        });
+    }
 
     public List<reservation> findAllReservationsByDriverId(int driverId) {
         String sql = "SELECT * FROM reservation WHERE driver_id = ?";

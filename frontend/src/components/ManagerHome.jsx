@@ -92,20 +92,72 @@ const mockParkingLots = [
 
 function ManagerHome() {
 
+  const fetchManagerLots = async () => {
+    try {
+      const token = sessionStorage.getItem('token');
+      const id = sessionStorage.getItem('userId');
+  
+      const response = await fetch(`http://localhost:8080/manager/${id}/parkinglots`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      setParkingLots(data);
+    } catch (error) {
+      console.error('Error fetching parking lots:', error);
+    }
+  };
+  const addNewLot = async (newLot) => {
+    const id = sessionStorage.getItem('userId');
+    const lot = {
+      manager_id: id,
+      capacity: newLot.capacity,
+      disabled_discount: newLot.disabled_discount,
+      dynamic_weight: 1,
+      ev_fees: newLot.ev_fees,
+      latitude: newLot.latitude,
+      longitude: newLot.longitude,
+      name: newLot.name,
+      original_price: newLot.original_price,
+      spots:newLot.spots,
+    }
+    console.log(lot);
+    try {
+      const token = sessionStorage.getItem('token'); 
+  
+      const url = `http://localhost:8080/manager/add/lot`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(lot),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log('Lot Added successful:', data);
+
+    } catch (error) {
+      console.error('Error submitting reservation:', error);
+    }
+  };
+  
+
   useEffect(() => {
-    // Fetch parking lots from the server
-    const url = 'localhost:8080/manager/parkinglots';
-    fetch(url, {
-        method: 'GET', // Explicitly specify the request method
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => setParkingLots(data))
-        .catch((error) => console.error('Error fetching parking lots:', error));      
+    fetchManagerLots();    
   });
 
   const [parkingLots, setParkingLots] = useState(mockParkingLots);
@@ -124,6 +176,8 @@ function ManagerHome() {
 
   const handleNewLotSubmit = (newLot) => {
     setParkingLots([...parkingLots, newLot]);
+    addNewLot(newLot);
+
   };
 
 

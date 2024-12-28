@@ -6,7 +6,6 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
   const [reservations, setReservations] = useState([]);
 
   useEffect(() => {
-    
     if (spot) {
       setReservations(spot.reservations);
     }
@@ -40,7 +39,7 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
   const updateSpot = async (updatedSpot) => {
     try {
       const token = sessionStorage.getItem('token'); 
-      const response = await fetch(`http://localhost:8080/spots/${updatedSpot.spot_id}`, {
+      const response = await fetch(`http://localhost:8080/manager/update/spot`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -48,7 +47,27 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
         },
         body: JSON.stringify(updatedSpot),
       });
+      console.log(updatedSpot);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error updating spot:', error);
+    }
+  };
 
+  const deleteReservation = async (reservation) => {
+    try {
+      const token = sessionStorage.getItem('token'); 
+      const response = await fetch(`http://localhost:8080/manager/delete/reservation`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reservation),
+      });
+      console.log(reservation);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -59,7 +78,7 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
 
   const handleDeleteReservation = (index) => {
     const updatedReservations = [...reservations];
-    updatedReservations.splice(index, 1);
+    const [deletedReservation] = updatedReservations.splice(index, 1);
     setReservations(updatedReservations);
 
     if (updatedReservations.length === 0 && spot.status === 'reserved') {
@@ -68,7 +87,7 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
 
     const updatedSpot = { ...spot, reservations: updatedReservations };
     console.log(updatedSpot);
-    updateSpot(updatedSpot);
+    deleteReservation(deletedReservation);
   };
 
   const handleToggleStatus = () => {
