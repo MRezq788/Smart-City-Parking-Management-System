@@ -47,7 +47,7 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
         },
         body: JSON.stringify(updatedSpot),
       });
-      console.log(updatedSpot);
+      // console.log(updatedSpot);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -67,7 +67,7 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
         },
         body: JSON.stringify(reservation),
       });
-      console.log(reservation);
+      // console.log(reservation);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -86,7 +86,7 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
     }
 
     const updatedSpot = { ...spot, reservations: updatedReservations };
-    console.log(updatedSpot);
+    // console.log(updatedSpot);
     deleteReservation(deletedReservation);
   };
 
@@ -98,7 +98,7 @@ function SpotDetails({ lot, spot, open, onClose, onReserve, isDriver }) {
     }
 
     const updatedSpot = { ...spot, reservations };
-    console.log(updatedSpot);
+    // console.log(updatedSpot);
     updateSpot(updatedSpot);
 
     onClose();

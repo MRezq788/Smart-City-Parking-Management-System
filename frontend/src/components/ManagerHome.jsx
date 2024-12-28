@@ -129,7 +129,7 @@ function ManagerHome() {
       original_price: newLot.original_price,
       spots:newLot.spots,
     }
-    console.log(lot);
+    // console.log(lot);
     try {
       const token = sessionStorage.getItem('token'); 
   

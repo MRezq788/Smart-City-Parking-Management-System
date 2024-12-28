@@ -99,7 +99,7 @@ function DriverHome() {
     }
   };
   const reserveSpot = async (selectedSpotId, reservation) => {
-    console.log(reservation);
+    // console.log(reservation);
     const res = {
       spot_id: selectedSpotId,
       driver_id: sessionStorage.getItem('userId'),
@@ -127,7 +127,6 @@ function DriverHome() {
   
       const data = await response.json();
       console.log('Reservation successful:', data);
-      console.log(reservationDTo);
       return data;
     } catch (error) {
       console.error('Error submitting reservation:', error);
@@ -153,9 +152,9 @@ function DriverHome() {
   const handleSpotSelect = (spot) => {
     setSelectedSpot(spot);
     setIsSpotDetailsOpen(true);
-    console.log("selected lot name : "+ selectedLot.name);
-    console.log("selected spot id : "+ spot.spot_id+"\ntype : "+spot.type+
-      "\nspot status : "+spot.status+"\nspot reservation : "+spot.reservations.length);
+    // console.log("selected lot name : "+ selectedLot.name);
+    // console.log("selected spot id : "+ spot.spot_id+"\ntype : "+spot.type+
+    //   "\nspot status : "+spot.status+"\nspot reservation : "+spot.reservations.length);
       
   };
 
